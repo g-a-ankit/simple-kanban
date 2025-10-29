@@ -1,0 +1,10 @@
+{
+  "name": "simple-kanban",
+  "version": "1.0.0",
+  "author": "g-a-ankit <gaankit99@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "db-setup": "docker run --name my_postgres -d -e POSTGRES_PASSWORD=mysecretpassword -v my_pgdata:/var/lib/postgresql/data -p 5432:5432 postgres:16",
+    "start:project": "docker compose up && "
+  }
+}

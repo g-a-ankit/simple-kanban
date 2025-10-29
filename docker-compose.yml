@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: simple_kanban
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin_ui
+  #   restart: always
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@example.com
+  #     PGADMIN_DEFAULT_PASSWORD: admin123
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
+
+  # simple-kanban-backend:
+  #   build:
+  #     context: ./simple_kanban_backend
+  #     dockerfile: Dockerfile
+  #   container_name: simple_kanban_backend
+  #   restart: always
+  #   depends_on:
+  #     postgres:
+  #       condition: service_healthy
+  #   environment:
+  #     DATABASE_URL: postgres://ankit:secretpassword@postgres:5432/mydatabase
+  #     NODE_ENV: development
+  #   ports:
+  #     - "4100:4100"
+  #   volumes:
+  #     - .:/usr/src/app
+  #   command: yarn start
+volumes:
+  postgres_data:
+  pgadmin_data:

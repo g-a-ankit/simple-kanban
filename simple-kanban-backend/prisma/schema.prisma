@@ -1,0 +1,127 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  name          String
+  email         String         @unique
+  passwordHash  String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // Relations
+  ownedBoards   Board[]        @relation("OwnedBoards")
+  memberBoards  BoardMember[]
+  assignedTasks Task[]         @relation("AssignedTasks")
+
+  comments      Comment[]
+}
+
+model Board {
+  id          String         @id @default(uuid())
+  title       String
+  description String?
+  visibility  Visibility      @default(PRIVATE)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  // Relations
+  owner       User            @relation("OwnedBoards", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId     String
+
+  columns     Column[]
+  members     BoardMember[]
+}
+
+model BoardMember {
+  id        String   @id @default(uuid())
+  role      Role     @default(VIEWER)
+  addedAt   DateTime @default(now())
+
+  // Relations
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId   String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@unique([boardId, userId])
+}
+
+model Column {
+  id        String   @id @default(uuid())
+  title     String
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  board     Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  boardId   String
+
+  tasks     Task[]
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  position    Int
+  dueDate     DateTime?
+  status      TaskStatus @default(TODO)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  column      Column     @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  columnId    String
+
+  assignedTo  User?      @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  assignedToId String?
+
+  comments    Comment[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  // Relations
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId    String
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+}
+
+// ===== ENUMS =====
+
+enum Role {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+enum Visibility {
+  PRIVATE
+  SHARED
+  PUBLIC
+}
+
+// we can give user the freedom to create his own flag for status
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  REJECTED
+  DONE
+}
