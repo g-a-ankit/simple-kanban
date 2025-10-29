@@ -1,0 +1,131 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Task {
+  id: ID!
+  title: String!
+  status: String!
+  description: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  column: Column
+  assignedTo: User
+}
+
+type Column {
+  id: ID!
+  title: String!
+  position: Int!
+  createdAt: DateTime
+  updatedAt: DateTime
+  board: Board
+  tasks: [Task!]
+}
+
+type Board {
+  id: ID!
+  title: String!
+  description: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+  owner: User
+  columns: [Column!]
+}
+
+type Query {
+  users: [User!]!
+  user(id: ID!): User!
+  boards: [Board!]!
+  board(id: ID!): Board!
+  tasks: [Task!]!
+  task(id: ID!): Task!
+  columns: [Column!]!
+  column(id: ID!): Column!
+}
+
+type Mutation {
+  createUser(createUserDto: CreateUserInput!): User!
+  updateUser(id: ID!, updateUserDto: UpdateUserInput!): User!
+  removeUser(id: ID!): Boolean!
+  createBoard(createBoard: CreateBoardInput!): Board!
+  updateBoard(id: ID!, updateBoardDto: UpdateBoardInput!): Board!
+  removeBoard(id: ID!): Boolean!
+  createTask(createTaskDto: CreateTaskInput!): Task!
+  updateTask(id: ID!, updateTaskDto: UpdateTaskInput!): Task!
+  removeTask(id: ID!): Boolean!
+  createColumn(createColumnDto: CreateColumnInput!): Column!
+  updateColumn(id: ID!, updateColumnDto: UpdateColumnInput!): Column!
+  removeColumn(id: ID!): Boolean!
+}
+
+input CreateUserInput {
+  name: String!
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  email: String
+}
+
+input CreateBoardInput {
+  title: String!
+  description: String
+  ownerId: String!
+}
+
+input UpdateBoardInput {
+  title: String
+  description: String
+  ownerId: String
+  id: Int!
+}
+
+input CreateTaskInput {
+  title: String!
+  description: String
+  status: TaskStatus
+  columnId: String!
+  position: Int
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+input UpdateTaskInput {
+  title: String
+  description: String
+  status: TaskStatus
+  columnId: String
+  position: Int
+}
+
+input CreateColumnInput {
+  title: String!
+  boardId: String!
+  position: Int
+}
+
+input UpdateColumnInput {
+  title: String
+  boardId: String
+  position: Int
+}
