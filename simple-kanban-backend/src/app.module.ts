@@ -25,7 +25,16 @@ import { join } from 'path';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'), // auto-generate schema
       playground: true, // enable GraphQL Playground
-      path: '/graphql', //
+      path: '/graphql',
+      formatError: (error) => {
+        // Hide internal details in production
+        const graphQLFormattedError = {
+          message: error.message,
+          code: error.extensions?.code || 'INTERNAL_SERVER_ERROR',
+          path: error.path,
+        };
+        return graphQLFormattedError;
+      },
     }),
   ],
   controllers: [AppController],
