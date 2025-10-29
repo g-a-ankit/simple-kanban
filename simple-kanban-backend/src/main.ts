@@ -8,6 +8,11 @@ async function bootstrap() {
     logger: WinstonModule.createLogger(winstonConfig),
   });
 
+  app.enableCors({
+    origin: '*',
+    // credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  });
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

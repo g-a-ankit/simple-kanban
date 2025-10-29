@@ -61,7 +61,9 @@ export class BoardsService {
       where: { id },
       include: {
         owner: true,
-        columns: true,
+        columns: {
+          include: { tasks: true },
+        },
       },
     });
 
